@@ -4,10 +4,14 @@ import pyautogui
 
 cap = cv2.VideoCapture(0)
 
-# green_lower = np.array([36, 25, 25])
-# green_upper = np.array([70, 255, 255])
-yellow_lower = np.array([22, 93, 0])
-yellow_upper = np.array([45, 255, 255])
+lower_green = np.array([65, 60, 60])
+upper_green = np.array([80, 255, 255])
+
+lower_yellow = np.array([22, 93, 0])
+upper_yellow = np.array([45, 255, 255])
+
+lower_red = np.array([0, 50, 50])
+upper_red = np.array([10, 255, 255])
 
 prev_y = 0
 
@@ -15,15 +19,16 @@ if __name__ == '__main__':
     while True:
         ret, frame = cap.read()
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(hsv, yellow_lower, yellow_upper)
+        mask = cv2.inRange(hsv, lower_red, upper_red)
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         for c in contours:
             area = cv2.contourArea(c)
-            if area > 1000:
+            if area > 600:
                 x, y, w, h = cv2.boundingRect(c)
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 if y < prev_y:
                     pyautogui.press('space')
+                    print(area)
                 prev_y = y
         cv2.imshow('frame', frame)
         cv2.imshow('mask', mask)
